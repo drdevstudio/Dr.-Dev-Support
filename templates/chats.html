@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Chats{% endblock %}
+{% block page_title %}🎧 Support Chats{% endblock %}
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+  <div>
+    <h2 style="font-size:1.1rem;font-weight:700">{{ chats|length }} Conversation(s)</h2>
+    <p style="color:var(--muted);font-size:.78rem">Click a user to open the chat</p>
+  </div>
+</div>
+
+{% if chats %}
+<div style="display:flex;flex-direction:column;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
+  {% for ch in chats %}
+  <a href="{{ url_for('chat_view', cid=ch.chat_id) }}"
+     style="display:flex;align-items:center;gap:14px;padding:14px 18px;
+            border-bottom:1px solid var(--border);text-decoration:none;color:inherit;
+            {% if ch.unread %}background:rgba(108,99,255,.06){% endif %}">
+    <div style="width:44px;height:44px;border-radius:50%;flex-shrink:0;
+                background:linear-gradient(135deg,var(--accent),var(--accent3));
+                display:flex;align-items:center;justify-content:center;
+                font-weight:700;font-size:1rem;color:#fff;position:relative">
+      {% if ch.photo_url %}
+        <img src="{{ ch.photo_url }}" alt="" style="width:44px;height:44px;border-radius:50%;object-fit:cover"/>
+      {% else %}
+        {{ (ch.user_name or '?')[0]|upper }}
+      {% endif %}
+      {% if ch.blocked %}
+        <span title="Blocked" style="position:absolute;bottom:-2px;right:-2px;background:#ff4444;
+                     color:#fff;border-radius:50%;font-size:.55rem;width:16px;height:16px;
+                     display:flex;align-items:center;justify-content:center">🚫</span>
+      {% elif ch.unread %}
+        <span style="position:absolute;top:-2px;right:-2px;background:var(--accent2);
+                     color:#fff;border-radius:99px;font-size:.6rem;padding:1px 5px;font-weight:700;min-width:16px;text-align:center">{{ ch.unread }}</span>
+      {% endif %}
+    </div>
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <span style="font-weight:{% if ch.unread %}700{% else %}500{% endif %};font-size:.9rem;
+                     overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:5px">
+          {{ ch.user_name or ch.chat_id }}
+          {% if ch.username %}<span style="color:var(--muted);font-weight:400;font-size:.78rem">@{{ ch.username }}</span>{% endif %}
+          {% if ch.blocked %}<span style="font-size:.6rem;background:#ff4444;color:#fff;padding:1px 6px;border-radius:20px;font-weight:600">BLOCKED</span>{% endif %}
+        </span>
+        <span style="font-size:.7rem;color:var(--muted);flex-shrink:0">{{ (ch.last_time or '')[:16] }}</span>
+      </div>
+      {% set preview = (ch.last_message or 'No messages yet') | replace('\n',' ') %}
+      {% set preview = preview[:55] + ('…' if preview|length > 55 else '') %}
+      <div style="font-size:.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px;
+                  color:{% if ch.unread %}var(--text){% else %}var(--muted){% endif %}">{{ preview }}</div>
+    </div>
+    <i class="fa-solid fa-chevron-right" style="color:var(--muted);font-size:.75rem"></i>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <i class="fa-solid fa-headset"></i>
+  <p>No conversations yet</p>
+  <p style="font-size:.8rem;margin-top:6px">Users will appear here as soon as they message your bot on Telegram</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Login — {{ panel_name }}</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+:root[data-theme="dark"]{--bg:#0f1117;--card:#1e2535;--accent:#6c63ff;--text:#e2e8f0;--muted:#8892a4;--border:#2a3347;--red:#e74c3c}
+:root[data-theme="light"]{--bg:#f0f2f5;--card:#ffffff;--accent:#6c63ff;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--red:#dc2626}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:36px 32px;width:100%;max-width:380px;box-shadow:0 8px 40px rgba(0,0,0,.3)}
+.logo{text-align:center;margin-bottom:28px}
+.logo h1{font-size:1.5rem;font-weight:700;background:linear-gradient(135deg,#6c63ff,#4cc9f0);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+.logo p{font-size:.8rem;color:var(--muted)}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;font-weight:500}
+.form-control{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);
+  color:var(--text);padding:11px 14px;border-radius:10px;font-size:.88rem}
+.form-control:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,99,255,.12)}
+.btn{width:100%;padding:12px;background:linear-gradient(135deg,#6c63ff,#4cc9f0);
+  color:#fff;border:none;border-radius:10px;font-size:.9rem;font-weight:600;cursor:pointer;margin-top:8px}
+.btn:hover{opacity:.9}
+.alert{padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:.82rem;
+  background:rgba(231,76,60,.12);border:1px solid rgba(231,76,60,.25);color:var(--red);display:flex;align-items:center;gap:8px}
+.theme-toggle{position:fixed;top:16px;right:16px;background:var(--card);border:1px solid var(--border);
+  border-radius:8px;padding:8px 12px;cursor:pointer;color:var(--muted)}
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()"><i class="fa-solid fa-sun" id="ti"></i></button>
+<div class="card">
+  <div class="logo">
+    <h1>🎧 {{ panel_name }}</h1>
+    <p>Support Admin — Secure Login</p>
+  </div>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for cat,msg in messages %}
+      <div class="alert"><i class="fa-solid fa-triangle-exclamation"></i>{{ msg }}</div>
+    {% endfor %}
+  {% endwith %}
+  <form method="POST">
+    <div class="form-group">
+      <label class="form-label"><i class="fa-solid fa-user"></i> Username</label>
+      <input type="text" name="username" class="form-control" required autocomplete="username" autofocus/>
+    </div>
+    <div class="form-group">
+      <label class="form-label"><i class="fa-solid fa-lock"></i> Password</label>
+      <input type="password" name="password" class="form-control" required autocomplete="current-password"/>
+    </div>
+    <button type="submit" class="btn"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
+  </form>
+</div>
+<script>
+const h=document.documentElement;
+const t=localStorage.getItem('theme')||'dark';
+h.setAttribute('data-theme',t); updateIcon(t);
+function toggleTheme(){const n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('theme',n);updateIcon(n);}
+function updateIcon(t){document.getElementById('ti').className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon';}
+</script>
+</body>
+</html>
